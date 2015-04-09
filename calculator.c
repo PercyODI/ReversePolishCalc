@@ -1,3 +1,11 @@
+/*
+ * Name: Pearse Hutson
+ * Pawprint: pah9qd
+ * ID: 14040826
+ * Lab: E
+ * Homework 3
+ * 4/9/2015
+ */
 // Submission Guidelines for lab 9
 // tar -czvf lab9.tar.gz runner.c bst.c bst.h Makefile
 // cs_submit CS2050_E LAB9 lab9.tar.gz
