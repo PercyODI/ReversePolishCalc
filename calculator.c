@@ -23,34 +23,6 @@
 static int prec(char operator);
 static int isNumeric(char *num);
 
-
-// int main(void)
-// {
-//     char userString[100];
-//     char *postfixStr;
-//     int equationResult;
-//
-//     printf("Enter a string: ");
-//     fgets(userString, MAX_EQU_LEN, stdin);
-//     if ((strlen(userString)>0) && (userString[strlen (userString) - 1] == '\n'))
-//         userString[strlen (userString) - 1] = '\0';
-//     while(strcmp(userString, "exit") != 0)
-//     {
-//         postfixStr = infix_to_postfix(userString);
-//         printf("%s\n", postfixStr);
-//         equationResult = evaluate_postfix(postfixStr);
-//         printf("%s = %d", userString, equationResult);
-//
-//
-//         printf("\nEnter a string: ");
-//         fgets(userString, MAX_EQU_LEN, stdin);
-//         if ((strlen(userString)>0) && (userString[strlen (userString) - 1] == '\n'))
-//             userString[strlen (userString) - 1] = '\0';
-//     }
-//
-//     return 0;
-// }
-
 /**********************************************************
  *                          prec
  * Parameters:
@@ -67,29 +39,17 @@ static int isNumeric(char *num);
 static int prec(char operator)
 {
     if(operator == '*')
-    {
         return 5;
-    }
     else if(operator == '/')
-    {
         return 4;
-    }
     else if(operator == '%')
-    {
         return 3;
-    }
     else if(operator == '+')
-    {
         return 2;
-    }
     else if(operator == '-')
-    {
         return 1;
-    }
     else
-    {
         return 0;
-    }
 }
 
 /**********************************************************
@@ -112,9 +72,7 @@ static int isNumeric(char *num)
     for(i = 0; i < num_len; i++)
     {
         if(isdigit(*(num + i)) == 0)
-        {
             return 0;
-        }
     }
 
     return 1;
@@ -138,17 +96,22 @@ static int isNumeric(char *num)
  *     else if the next token is a left paren
  *          push it onto the stack
  *     else if the next token is a right paren
- *          while the stack is not empty and the left paren is not at the top of the stack
+ *          while the stack is not empty and the left paren 
+ *			 is not at the top of the stack
  *              pop the next operator off of the stack
  *              append it to the postfix string
  *          pop the left paren off of the stack and discard it
  *     else if the next token is an operator (+, -, *, /)
- *         while the stack is not empty and the operator at the top of the stack has a higher precedence than the token
- *              pop the top element off of the stack and append it to the postfix string
+ *         while the stack is not empty and the operator at 
+ *		    the top of the stack has a higher precedence than 
+ *		    the token
+ *              pop the top element off of the stack and 
+ *				append it to the postfix string
  *         push the current token onto the stack
  *
  * while there are elements remaining on the stack
- *     pop the top element off of the stack and append it to the postfix string
+ *     pop the top element off of the stack and append it 
+ *	    to the postfix string
  **********************************************************/
 char* infix_to_postfix(char* infix)
 {
@@ -163,30 +126,25 @@ char* infix_to_postfix(char* infix)
     for(i = 0; i < equLen; i++)
     {
         currChar[0] = infix[i];
-
-        if(postfixIndex > (MAX_EQU_LEN - 2)) //Prevents access to invalid memory
+		// Prevents access to invalid memory 
+		// (Shouldn't happen because of buffer in frontend.c)
+        if(postfixIndex > (MAX_EQU_LEN - 2)) 
             break;
 
         if(isNumeric(currChar))
-        {
             postfixStr[postfixIndex++] = infix[i];
-        }
         else if(currChar[0] == '(')
         {
             push(runningStack, '(');
             if(postfixIndex != 0 && postfixStr[postfixIndex - 1] != DELIMITER)
-            {
                 postfixStr[postfixIndex++] = DELIMITER;
-            }
         }
         else if(currChar[0] == ')')
         {
             while(isEmpty(runningStack) == 0 && top(runningStack) != '(')
             {
                 if(postfixIndex != 0 && postfixStr[postfixIndex - 1] != DELIMITER)
-                {
                     postfixStr[postfixIndex++] = DELIMITER;
-                }
                 postfixStr[postfixIndex++] = top(runningStack);
                 pop(runningStack);
             }
@@ -195,9 +153,7 @@ char* infix_to_postfix(char* infix)
         else if(currChar[0] == ' ')//next char is a whitespace
         {
             if(postfixIndex != 0 && postfixStr[postfixIndex - 1] != DELIMITER)
-            {
                 postfixStr[postfixIndex++] = DELIMITER;
-            }
         }
         else if(currChar[0] == '\n')//ends equation if next char is a newline
         {
@@ -208,9 +164,7 @@ char* infix_to_postfix(char* infix)
             precVal = prec(currChar[0]);
 
             if(postfixIndex != 0 && postfixStr[postfixIndex - 1] != DELIMITER)
-            {
                 postfixStr[postfixIndex++] = DELIMITER;
-            }
 
             while(isEmpty(runningStack) == 0 && prec(top(runningStack)) > precVal)
             {
@@ -223,14 +177,14 @@ char* infix_to_postfix(char* infix)
         //If next char is invalid, it is skipped and the next char is read
     }
 
-    while(isEmpty(runningStack) == 0 && postfixIndex < (MAX_EQU_LEN - 2)) //Add remaining operaters from stack to equation
+    while(isEmpty(runningStack) == 0 && postfixIndex < (MAX_EQU_LEN - 2)) //Add remaining operators from stack to equation
     {
         postfixStr[postfixIndex++] = DELIMITER;
         postfixStr[postfixIndex++] = top(runningStack);
         pop(runningStack);
     }
 
-    postfixStr[postfixIndex] = '\0';
+    // postfixStr[postfixIndex] = '\0'; //Unnecessary due to use of calloc
 
     free(currChar);
     free(runningStack);
@@ -247,7 +201,7 @@ char* infix_to_postfix(char* infix)
  *     This function takes in a valid postfix expression
  * and evaluate it to an integer
  *
- * Psuedocode:
+ * Pseudocode:
  * for each token in the string
  *      if the token is numeric
  *          convert it to an integer
@@ -286,46 +240,22 @@ int evaluate_postfix(char* postfix)
         }
         else
         {
-            if(isEmpty(runningStack) == 0) //Prevent invalid pop and top actions
-            {
-                rightVar = top(runningStack);
-                pop(runningStack);
-            }
-            else
-            {
-                rightVar = 0;
-            }
+            rightVar = top(runningStack);
+            pop(runningStack);
+			leftVar = top(runningStack);
+            pop(runningStack);
 
-            if(isEmpty(runningStack) == 0)
-            {
-                leftVar = top(runningStack);
-                pop(runningStack);
-            }
-            else
-            {
-                leftVar = 0;
-            }
-
-            // if(token[0] == '+')
             if(strcmp(token, "+") == 0)
                 push(runningStack, leftVar + rightVar);
-            // else if(token[0] == '-')
             else if(strcmp(token, "-") == 0)
                 push(runningStack, leftVar - rightVar);
-            // else if(token[0] == '*')
             else if(strcmp(token, "*") == 0)
                 push(runningStack, leftVar * rightVar);
-            // else if(token[0] == '/')
             else if(strcmp(token, "/") == 0)
                 push(runningStack, leftVar / rightVar);
-            // else if(token[0] == '%')
             else if(strcmp(token, "%") == 0)
                 push(runningStack, leftVar % rightVar);
-            // else
-            // {
-            //     printf("Invalid Operation");
-            //     return -1;
-            // }
+            // If the operation is not listed above, it is ignored
         }
 
         token = strtok(NULL, delim);

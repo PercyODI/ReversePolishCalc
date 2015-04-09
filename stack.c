@@ -69,7 +69,7 @@ void pop(stack *s)
 {
     if(s->size == 0)
     {
-        printf("\n***\nInvalid Pop Action\n***\n");
+        // printf("\n***\nInvalid Pop Action\n***\n"); //Used for debugging
         return;
     }
 
@@ -98,7 +98,7 @@ int top(stack *s)
 
     if(s->size == 0)
     {
-        printf("\n***\nInvalid Top Action\n***\n");
+        // printf("\n***\nInvalid Top Action\n***\n"); //Used for debugging
         return 0;
     }
 
